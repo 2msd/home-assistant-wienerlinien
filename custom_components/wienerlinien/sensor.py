@@ -89,7 +89,9 @@ class WienerlinienSensor(Entity):
                         "direction": l["direction"],
                     })
          # sort departures by countdown value
+        _LOGGER.debug(res)
         res.sort(key=lambda x: x.get('countdown'))
+        _LOGGER.debug(res)
         return res
 
     async def async_update(self):
@@ -111,6 +113,7 @@ class WienerlinienSensor(Entity):
             # we have to make a list of lines and times, order it and get the requested arrival time
             l = data["monitors"][0]["lines"]
             d = self.sort_lines_and_departures(l)
+            _LOGGER.debug(d)
             departure = d[DEPARTURES[self.firstnext]["key"]]
             self._state = departure["time"]
 
