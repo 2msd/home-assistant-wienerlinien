@@ -2,6 +2,7 @@
 A integration that allows you to get information about next departure from specified stop.
 For more details about this component, please refer to the documentation at
 https://github.com/tofuSCHNITZEL/home-assistant-wienerlinien
+https://github.com/2msd/home-assistant-wienerlinien
 """
 import logging
 from datetime import timedelta
@@ -14,7 +15,7 @@ from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.entity import Entity
 
-from custom_components.wienerlinienmsd.const import BASE_URL, DEPARTURES
+from custom_components.wienerlinien.const import BASE_URL, DEPARTURES
 
 CONF_STOPS = "stops"
 CONF_APIKEY = "apikey"
