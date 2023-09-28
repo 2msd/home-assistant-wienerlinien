@@ -73,21 +73,21 @@ class WienerlinienSensor(Entity):
     def sort_lines_and_departures(self, lines):
         """Return sorted list of lines and departures."""
         res = []
-        for l in lines:
+        for theline in lines:
             # we need both the first and the second departure, because
             # the next two departures might be from different lines
-            theline = l["lines"]
+            l = theline["lines"][0]
             for i in [0, 1]:
-                d = theline["departures"]["departure"][i]
+                d = l["departures"]["departure"][i]
                 t = self.get_time_from_departure(d)
                 if t is not None:
                     res.append({
-                        "name": theline["name"],
+                        "name": l["name"],
                         "time": t,
                         "countdown": d["departureTime"]["countdown"],
-                        "destination": theline["towards"],
-                        "platform": theline["platform"],
-                        "direction": theline["direction"],
+                        "destination": l["towards"],
+                        "platform": l["platform"],
+                        "direction": l["direction"],
                     })
             # sort departures by countdown value
         res.sort(key=lambda x: x.get('countdown'))
