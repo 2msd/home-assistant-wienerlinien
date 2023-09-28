@@ -2,11 +2,11 @@
   "domain": "wienerlinien",
   "name": "Wienerlinien",
   "version": "1.2.3",
-  "documentation": "https://github.com/2msd/home-assistant-wienerlinien",
-  "issue_tracker": "https://github.com/2msd/home-assistant-wienerlinien/issues",
+  "documentation": "https://github.com/tofuSCHNITZEL/home-assistant-wienerlinien/",
+  "issue_tracker": "https://github.com/tofuSCHNITZEL/home-assistant-wienerlinien/issues",
   "dependencies": [],
   "codeowners": [
-    "@2msd"
+    "@tofuSCHNITZEL"
   ],
   "requirements": [],
   "iot_class": "cloud_polling"
