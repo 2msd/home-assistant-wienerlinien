@@ -76,22 +76,21 @@ class WienerlinienSensor(Entity):
         for l in lines:
             # we need both the first and the second departure, because
             # the next two departures might be from different lines
+            theline = l["lines"]
             for i in [0, 1]:
-                d = l["departures"]["departure"][i]
+                d = theline["departures"]["departure"][i]
                 t = self.get_time_from_departure(d)
                 if t is not None:
                     res.append({
-                        "name": l["name"],
+                        "name": theline["name"],
                         "time": t,
                         "countdown": d["departureTime"]["countdown"],
-                        "destination": l["towards"],
-                        "platform": l["platform"],
-                        "direction": l["direction"],
+                        "destination": theline["towards"],
+                        "platform": theline["platform"],
+                        "direction": theline["direction"],
                     })
-         # sort departures by countdown value
-        _LOGGER.debug(res)
+            # sort departures by countdown value
         res.sort(key=lambda x: x.get('countdown'))
-        _LOGGER.debug(res)
         return res
 
     async def async_update(self):
@@ -111,9 +110,8 @@ class WienerlinienSensor(Entity):
         try:
             # it cannot be assumed that the first line listed is also arriving sooner than the other,
             # we have to make a list of lines and times, order it and get the requested arrival time
-            l = data["monitors"][0]["lines"]
+            l = data["monitors"]
             d = self.sort_lines_and_departures(l)
-            _LOGGER.debug(d)
             departure = d[DEPARTURES[self.firstnext]["key"]]
             self._state = departure["time"]
 
