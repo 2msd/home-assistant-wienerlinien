@@ -90,7 +90,7 @@ class WienerlinienSensor(Entity):
                     })
          # sort departures by countdown value
         res.sort(key=lambda x: x.get('countdown'))
-        return d
+        return res
 
     async def async_update(self):
         """Update data."""
