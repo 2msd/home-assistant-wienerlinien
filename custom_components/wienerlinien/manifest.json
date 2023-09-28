@@ -6,7 +6,6 @@
   "issue_tracker": "https://github.com/2msd/home-assistant-wienerlinien/issues",
   "dependencies": [],
   "codeowners": [
-    "@tofuSCHNITZEL",
     "@2msd"
   ],
   "requirements": [],

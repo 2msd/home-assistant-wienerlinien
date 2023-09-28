@@ -1,7 +1,6 @@
 """
 A integration that allows you to get information about next departure from specified stop.
 For more details about this component, please refer to the documentation at
-https://github.com/tofuSCHNITZEL/home-assistant-wienerlinien
 https://github.com/2msd/home-assistant-wienerlinien
 """
 import logging
@@ -37,7 +36,6 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """Setup."""
-    _LOGGER.debug('->async_setup_platform')
     stops = config.get(CONF_STOPS)
     firstnext = config.get(CONF_FIRST_NEXT)
     dev = []
@@ -47,11 +45,9 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
         try:
             name = data["data"]["monitors"][0]["locationStop"]["properties"]["title"]
         except Exception:
-            _LOGGER.debug('--PlatformNotReady')
             raise PlatformNotReady()
         dev.append(WienerlinienSensor(api, name, firstnext))
     add_devices_callback(dev, True)
-    _LOGGER.debug('<-async_setup_platform')
 
 
 class WienerlinienSensor(Entity):
@@ -168,7 +164,6 @@ class WienerlinienAPI:
 
     async def get_json(self):
         """Get json from API endpoint."""
-        _LOGGER.debug('->get_json')
         value = None
         url = BASE_URL.format(self.stopid)
         try:
@@ -177,5 +172,4 @@ class WienerlinienAPI:
                 value = await response.json()
         except Exception:
             pass
-        _LOGGER.debug('<-get_json')
         return value
