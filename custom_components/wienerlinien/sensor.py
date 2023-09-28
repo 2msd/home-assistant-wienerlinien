@@ -61,6 +61,37 @@ class WienerlinienSensor(Entity):
         self._state = None
         self.attributes = {}
 
+    def get_time_from_departure(self, departure):
+        if "timeReal" in departure["departureTime"]:
+            res = departure["departureTime"]["timeReal"]
+        elif "timePlanned" in departure["departureTime"]:
+            res = departure["departureTime"]["timePlanned"]
+        else:
+            res = None
+        return res
+
+    def sort_lines_and_departures(self, lines):
+        """Return sorted list of lines and departures."""
+        res = []
+        for l in lines:
+            # we need both the first and the second departure, because
+            # the next two departures might be from different lines
+            for i in [0, 1]:
+                d = l["departures"]["departure"][i]
+                t = self.get_time_from_departure(d)
+                if t is not None:
+                    res.append({
+                        "name": l["name"],
+                        "time": t,
+                        "countdown": d["departureTime"]["countdown"],
+                        "destination": l["towards"],
+                        "platform": l["platform"],
+                        "direction": l["direction"],
+                    })
+         # sort departures by countdown value
+        d.sort(key=lambda x: x.get('countdown'))
+        return d
+
     async def async_update(self):
         """Update data."""
         try:
@@ -76,23 +107,19 @@ class WienerlinienSensor(Entity):
         if data is None:
             return
         try:
-            line = data["monitors"][0]["lines"][0]
-            departure = line["departures"]["departure"][
-                DEPARTURES[self.firstnext]["key"]
-            ]
-            if "timeReal" in departure["departureTime"]:
-                self._state = departure["departureTime"]["timeReal"]
-            elif "timePlanned" in departure["departureTime"]:
-                self._state = departure["departureTime"]["timePlanned"]
-            else:
-                self._state = self._state
+            # it cannot be assumed that the first line listed is also arriving sooner than the other,
+            # we have to make a list of lines and times, order it and get the requested arrival time
+            l = data["monitors"][0]["lines"]
+            d = self.sort_lines_and_departures(l)
+            departure = d[DEPARTURES[self.firstnext]["key"]]
+            self._state = departure["time"]
 
             self.attributes = {
-                "destination": line["towards"],
-                "platform": line["platform"],
-                "direction": line["direction"],
-                "name": line["name"],
-                "countdown": departure["departureTime"]["countdown"],
+                "destination": departure["destination"],
+                "platform": departure["platform"],
+                "direction": departure["direction"],
+                "name": departure["name"],
+                "countdown": departure["countdown"],
             }
         except Exception:
             pass
