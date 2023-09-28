@@ -14,7 +14,7 @@ from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.entity import Entity
 
-from custom_components.wienerlinien.const import BASE_URL, DEPARTURES
+from custom_components.wienerlinien_msd.const import BASE_URL, DEPARTURES
 
 CONF_STOPS = "stops"
 CONF_APIKEY = "apikey"
