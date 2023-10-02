@@ -81,8 +81,11 @@ class WienerlinienSensor(Entity):
                 d = l["departures"]["departure"][i]
                 t = self.get_time_from_departure(d)
                 if t is not None:
+                    n = l["name"]
+                    if n.isnumeric():
+                        n = str(l["name"])+":"
                     res.append({
-                        "name": str(l["name"]),
+                        "name": n,
                         "time": t,
                         "countdown": d["departureTime"]["countdown"],
                         "destination": l["towards"],
