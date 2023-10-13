@@ -79,7 +79,7 @@ class WienerlinienSensor(Entity):
             l = theline["lines"][0]
             barrierFree = l["barrierFree"]
             if barrierFree is True:
-                suffix = " \u267F"
+                suffix = " K"
             else:
                 suffix = " -"
             for i in [0, 1]:
@@ -87,13 +87,13 @@ class WienerlinienSensor(Entity):
                 t = self.get_time_from_departure(d)
                 if d["vehicle"] is not None:
                     if d["vehicle"]["barrierFree"]:
-                        suffix = " \u267F"
+                        suffix = " K"
                     else:
                         suffix = " -"
                 else:
                     s = suffix
                 if t is not None:
-                    n = l["name"]+s
+                    n = str(l["name"])+s
                     res.append({
                         "name": n,
                         "time": t,
