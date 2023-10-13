@@ -77,13 +77,23 @@ class WienerlinienSensor(Entity):
             # we need both the first and the second departure, because
             # the next two departures might be from different lines
             l = theline["lines"][0]
+            barrierFree = l["barrierFree"]
+            if barrierFree is True:
+                suffix = " \U0000267F"
+            else:
+                suffix = " \U0001F68B"
             for i in [0, 1]:
                 d = l["departures"]["departure"][i]
                 t = self.get_time_from_departure(d)
+                if d["vehicle"] is not None:
+                    if d["vehicle"]["barrierFree"]:
+                        s = " \U0000267F"
+                    else:
+                        s = " \U0001F68B"                        
+                else:
+                    s = suffix
                 if t is not None:
-                    n = l["name"]
-                    if n.isnumeric():
-                        n = str(l["name"])+":"
+                    n = l["name"]+s
                     res.append({
                         "name": n,
                         "time": t,
