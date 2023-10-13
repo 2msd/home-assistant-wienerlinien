@@ -73,28 +73,28 @@ class WienerlinienSensor(Entity):
     def sort_lines_and_departures(self, lines):
         """Return sorted list of lines and departures."""
         res = []
+        wheelchair = " \u267F"
+        oldtram = " \U0001F68B"
         for theline in lines:
             # we need both the first and the second departure, because
             # the next two departures might be from different lines
             l = theline["lines"][0]
             barrierFree = l["barrierFree"]
-            _LOGGER.error("barrierFree: "+barrierFree)
             if barrierFree is True:
-                suffix = " K"
+                suffix = wheelchair
             else:
-                suffix = " -"
+                suffix = oldtram
             for i in [0, 1]:
                 d = l["departures"]["departure"][i]
                 t = self.get_time_from_departure(d)
-                if d["vehicle"] is not None:
+                if "vehicle" in d:
                     if d["vehicle"]["barrierFree"]:
-                        suffix = " K"
+                        suffix = wheelchair
                     else:
-                        suffix = " -"
+                        suffix = oldtram
                 else:
                     s = suffix
                 if t is not None:
-                    _LOGGER.error("SUFFIX: "+s)
                     n = str(l["name"])+s
                     res.append({
                         "name": n,
