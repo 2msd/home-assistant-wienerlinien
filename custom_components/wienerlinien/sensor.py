@@ -78,6 +78,7 @@ class WienerlinienSensor(Entity):
             # the next two departures might be from different lines
             l = theline["lines"][0]
             barrierFree = l["barrierFree"]
+            _LOGGER.error("barrierFree: "+barrierFree)
             if barrierFree is True:
                 suffix = " K"
             else:
@@ -93,6 +94,7 @@ class WienerlinienSensor(Entity):
                 else:
                     s = suffix
                 if t is not None:
+                    _LOGGER.error("SUFFIX: "+s)
                     n = str(l["name"])+s
                     res.append({
                         "name": n,
