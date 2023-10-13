@@ -89,9 +89,9 @@ class WienerlinienSensor(Entity):
                 t = self.get_time_from_departure(d)
                 if "vehicle" in d:
                     if d["vehicle"]["barrierFree"] is True:
-                        suffix = wheelchair
+                        s = wheelchair
                     else:
-                        suffix = oldtram
+                        s = oldtram
                 else:
                     s = suffix
                 if t is not None:
