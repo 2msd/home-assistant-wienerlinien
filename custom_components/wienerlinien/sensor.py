@@ -14,11 +14,10 @@ from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.entity import Entity
 
-from custom_components.wienerlinien.const import BASE_URL, DEPARTURES
+from custom_components.wienerlinien.const import BASE_URL
 
 CONF_STOPS = "stops"
 CONF_APIKEY = "apikey"
-CONF_FIRST_NEXT = "firstnext"
 
 SCAN_INTERVAL = timedelta(seconds=30)
 
@@ -26,7 +25,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Optional(CONF_APIKEY): cv.string,
         vol.Optional(CONF_STOPS, default=None): vol.All(cv.ensure_list, [cv.string]),
-        vol.Optional(CONF_FIRST_NEXT, default="first"): cv.string,
     }
 )
 
@@ -127,7 +125,8 @@ class WienerlinienSensor(Entity):
             # we have to make a list of lines and times, order it and get the requested arrival time
             l = data["monitors"]
             d = self.sort_lines_and_departures(l)
-            departure = d[DEPARTURES[self.firstnext]["key"]]
+            departure = d[0]
+            next_departure = d[1]
             self._state = departure["time"]
 
             self.attributes = {
@@ -136,6 +135,12 @@ class WienerlinienSensor(Entity):
                 "direction": departure["direction"],
                 "name": departure["name"],
                 "countdown": departure["countdown"],
+                "next_time": next_departure["time"],
+                "next_destination": next_departure["destination"],
+                "next_platform": next_departure["platform"],
+                "next_direction": next_departure["direction"],
+                "next_name": next_departure["name"],
+                "next_countdown": next_departure["countdown"],
             }
         except Exception:
             pass
@@ -143,7 +148,7 @@ class WienerlinienSensor(Entity):
     @property
     def name(self):
         """Return name."""
-        return DEPARTURES[self.firstnext]["name"].format(self._name)
+        return self._name
 
     @property
     def state(self):
