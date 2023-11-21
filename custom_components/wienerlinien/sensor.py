@@ -35,7 +35,6 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """Setup."""
     stops = config.get(CONF_STOPS)
-    firstnext = config.get(CONF_FIRST_NEXT)
     dev = []
     for stopid in stops:
         api = WienerlinienAPI(async_create_clientsession(hass), hass.loop, stopid)
@@ -44,17 +43,16 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
             name = data["data"]["monitors"][0]["locationStop"]["properties"]["title"]
         except Exception:
             raise PlatformNotReady()
-        dev.append(WienerlinienSensor(api, name, firstnext))
+        dev.append(WienerlinienSensor(api, name))
     add_devices_callback(dev, True)
 
 
 class WienerlinienSensor(Entity):
     """WienerlinienSensor."""
 
-    def __init__(self, api, name, firstnext):
+    def __init__(self, api, name):
         """Initialize."""
         self.api = api
-        self.firstnext = firstnext
         self._name = name
         self._state = None
         self.attributes = {}
