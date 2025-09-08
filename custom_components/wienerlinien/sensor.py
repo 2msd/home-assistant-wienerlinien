@@ -18,13 +18,21 @@ from custom_components.wienerlinien.const import BASE_URL
 
 CONF_STOPS = "stops"
 CONF_APIKEY = "apikey"
+CONF_STOP = "stop"
+CONF_FILTER = "line"
+
 
 SCAN_INTERVAL = timedelta(seconds=30)
+
+STOP_SCHEMA = vol.Schema({
+    vol.Required(CONF_STOP): cv.string,
+    vol.Optional(CONF_FILTER, default=None): cv.string,
+})
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Optional(CONF_APIKEY): cv.string,
-        vol.Optional(CONF_STOPS, default=None): vol.All(cv.ensure_list, [cv.string]),
+        vol.Required(CONF_STOPS): vol.All(cv.ensure_list, [STOP_SCHEMA]),
     }
 )
 
@@ -36,24 +44,28 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
     """Setup."""
     stops = config.get(CONF_STOPS)
     dev = []
-    for stopid in stops:
+    for s in stops:
+        stopid = s[CONF_STOP]
+        flt = s[CONF_FILTER]
         api = WienerlinienAPI(async_create_clientsession(hass), hass.loop, stopid)
         data = await api.get_json()
         try:
             name = data["data"]["monitors"][0]["locationStop"]["properties"]["title"]
         except Exception:
             raise PlatformNotReady()
-        dev.append(WienerlinienSensor(api, name))
+        dev.append(WienerlinienSensor(api, name, flt))
     add_devices_callback(dev, True)
 
 
 class WienerlinienSensor(Entity):
     """WienerlinienSensor."""
 
-    def __init__(self, api, name):
+    def __init__(self, api, name, flt):
         """Initialize."""
         self.api = api
         self._name = name
+        self._name = name
+        self._flt = flt
         self._state = None
         self.attributes = {}
 
@@ -82,6 +94,8 @@ class WienerlinienSensor(Entity):
                 suffix = oldtram
             for i in [0, 1]:
                 d = l["departures"]["departure"][i]
+                if ( self._flt != None and str(l["name"]).lower() != str(self._flt).lower() ):
+                    continue
                 t = self.get_time_from_departure(d)
                 if "vehicle" in d:
                     if d["vehicle"]["barrierFree"] is True:
