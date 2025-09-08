@@ -13,10 +13,10 @@ To get started install this with [HACS](https://hacs.xyz/)
 ```yaml
 sensor:
   platform: wienerlinien
-  firstnext: first
   stops:
-    - '4429'
-    - '3230'
+    - stop: '136'
+      line: 'D' --> THIS IS A FILTER for a single line on this stop
+    - stop: '1435'
 ```
 
 ## Configuration variables
@@ -39,4 +39,3 @@ You can find out the Stop ID (rbl number) thanks to [Matthias Bendel](https://gi
 This platform is using the [Wienerlinien API](http://www.wienerlinien.at) API to get the information.
 'Datenquelle: Stadt Wien – data.wien.gv.at'
 Lizenz (CC BY 3.0 AT)
-
