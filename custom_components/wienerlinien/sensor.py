@@ -26,7 +26,7 @@ SCAN_INTERVAL = timedelta(seconds=30)
 
 STOP_SCHEMA = vol.Schema({
     vol.Required(CONF_STOP): cv.string,
-    vol.Optional(CONF_FILTER, default=None): cv.string,
+    vol.Optional(CONF_FILTER, default=''): cv.string,
 })
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -94,7 +94,7 @@ class WienerlinienSensor(Entity):
                 suffix = oldtram
             for i in [0, 1]:
                 d = l["departures"]["departure"][i]
-                if ( self._flt != None and str(l["name"]).lower() != str(self._flt).lower() ):
+                if ( self._flt != '' and str(l["name"]).lower() != str(self._flt).lower() ):
                     continue
                 t = self.get_time_from_departure(d)
                 if "vehicle" in d:
